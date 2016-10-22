@@ -1,4 +1,4 @@
-function [soln] = value(gridk, nk, maxit, tol, alpha, beta, A)
+function [soln] = value3(gridk, nk, maxit, tol, alpha, beta, A)
 
     %% Numerical Solution
 
@@ -30,33 +30,12 @@ function [soln] = value(gridk, nk, maxit, tol, alpha, beta, A)
                 end;
             end;
         end;
-        diff=max(abs(vfun(it,:)-vfun(it-1,:)));
+        diff=max(abs(vfun(it,:)-vfun(it-1,:))); % needs to access previous row here
     end;
 
     g = gfun(it,:)';
-    v = zeros(nk,1);
-    for kc=1:nk
-        v(kc) = log(A*gridk(kc)^alpha-g(kc))+beta*vfun(it,find(gridk==g(kc)));
-    end;
-    soln2 = [gridk v g];
-    
-    
-    %% Create Table of the value function for all k and k'
-    table = zeros(nk);
-    for kc=1:nk
-        for kcc=1:nk
-            table(kc,kcc)=log(A*gridk(kc)^alpha-gridk(kcc))+beta*vfun(end,kcc);
-        end;
-    end;
-
-    %% Report value and policy functions
-
-    soln = zeros(nk,3);
-    for kc=1:nk
-        [maxval, maxind] = max(table(kc,:));
-        gk = gridk(maxind);
-        soln(kc,:) = [gridk(kc) maxval gk];
-    end;
+    v = vfun(it,:)';
+    soln = [gridk v g];
     
     disp(it)
     
